@@ -1,6 +1,7 @@
 package com.API_Rest_01.controller;
 
 
+import com.API_Rest_01.dto.PersonnesDTO;
 import com.API_Rest_01.entity.Personnes;
 import com.API_Rest_01.service.PersonnesService;
 import lombok.RequiredArgsConstructor;
@@ -16,18 +17,18 @@ public class PersonnesController {
     private final PersonnesService personnesService;
 
     @GetMapping("/all")
-    public List<Personnes> getAllsPersons(){
+    public List<PersonnesDTO> getAllsPersons(){
         return personnesService.getPersons();
     }
 
     @PostMapping("/add")
-    public Personnes addPersonnes(@RequestBody Personnes personnes){
-        return personnesService.addPerson(personnes);
+    public PersonnesDTO addPersonnes(@RequestBody PersonnesDTO personnesDTO){
+        return personnesService.addPerson(personnesDTO);
     }
 
     @PutMapping("/update/{id}")
-    public Personnes update(@PathVariable Long id, @RequestBody Personnes personnes){
-        return personnesService.updatePerson(id, personnes);
+    public PersonnesDTO update(@PathVariable Long id, @RequestBody PersonnesDTO personnesDTO){
+        return personnesService.updatePerson(id, personnesDTO);
     }
 
     @DeleteMapping("/delete/{id}")
