@@ -6,6 +6,7 @@ import com.API_Rest_01.dto.PersonneResponseDTO;
 import com.API_Rest_01.dto.PersonnesDTO;
 import com.API_Rest_01.entity.Personnes;
 import com.API_Rest_01.service.PersonnesService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,12 +25,12 @@ public class PersonnesController {
     }
 
     @PostMapping("/add")
-    public PersonneResponseDTO addPersonnes(@RequestBody PersonneRequestDTO requestDTO){
+    public PersonneResponseDTO addPersonnes(@Valid @RequestBody PersonneRequestDTO requestDTO){
         return personnesService.addPerson(requestDTO);
     }
 
     @PutMapping("/update/{id}")
-    public PersonneResponseDTO update(@PathVariable Long id, @RequestBody PersonneRequestDTO requestDTO){
+    public PersonneResponseDTO update(@PathVariable Long id, @Valid @RequestBody PersonneRequestDTO requestDTO){
         return personnesService.updatePerson(id, requestDTO);
     }
 

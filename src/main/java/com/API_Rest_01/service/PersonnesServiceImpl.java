@@ -3,6 +3,7 @@ package com.API_Rest_01.service;
 import com.API_Rest_01.dto.PersonneRequestDTO;
 import com.API_Rest_01.dto.PersonneResponseDTO;
 import com.API_Rest_01.entity.Personnes;
+import com.API_Rest_01.exception.ResourceNotFoundException;
 import com.API_Rest_01.repository.PersonnesRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -46,13 +47,18 @@ public class PersonnesServiceImpl implements PersonnesService {
                     return enResponseDTO(personneMaj);
 
                 })
-                .orElseThrow(() -> new RuntimeException("Aucune personne trouvée avec cet Id : " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Aucune personne trouvée avec cet Id : " + id));
     }
 
     @Override
     public String deletePerson(Long id) {
-        personnesRepository.deleteById(id);
-        return "Cette Personne *" + id + "* a été supprimée";
+
+        Personnes personnes = personnesRepository.findById(id)
+                        .orElseThrow(() -> new ResourceNotFoundException("Pas de personne avec cet ID [" + id + "]"));
+
+        personnesRepository.delete(personnes);
+
+        return "Cette Personne [" + id + "] a été supprimée";
     }
 
     //CONVERTIONS... DTO en ENTITY
