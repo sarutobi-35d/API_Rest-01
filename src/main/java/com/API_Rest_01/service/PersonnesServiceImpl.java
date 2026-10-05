@@ -1,6 +1,7 @@
 package com.API_Rest_01.service;
 
-import com.API_Rest_01.dto.PersonnesDTO;
+import com.API_Rest_01.dto.PersonneRequestDTO;
+import com.API_Rest_01.dto.PersonneResponseDTO;
 import com.API_Rest_01.entity.Personnes;
 import com.API_Rest_01.repository.PersonnesRepository;
 import lombok.RequiredArgsConstructor;
@@ -16,41 +17,36 @@ public class PersonnesServiceImpl implements PersonnesService {
     private final PersonnesRepository personnesRepository;
 
     @Override
-    public List<PersonnesDTO> getPersons() {
-
+    public List<PersonneResponseDTO> getPersons() {
         return personnesRepository.findAll()
                 .stream()
-                .map(this::enDTO)
+                .map(this::enResponseDTO)
                 .collect(Collectors.toList());
     }
 
     @Override
-    public PersonnesDTO addPerson(PersonnesDTO personnesDTO) {
+    public PersonneResponseDTO addPerson(PersonneRequestDTO requestDTO) {
 
-        // 1. Convertir le DTO reçu en Entité JPA
-        Personnes personneAEnregistrer = enEntity(personnesDTO);
-
-        // 2. Sauvegarder l'entité en BD
+        Personnes personneAEnregistrer = enEntity(requestDTO);
         Personnes personneSauvegardee = personnesRepository.save(personneAEnregistrer);
 
-        // 3. Re-convertir l'entité sauvegardée en DTO pour le retour
-        return enDTO(personneSauvegardee);
+        return enResponseDTO(personneSauvegardee);
     }
 
     @Override
-    public PersonnesDTO updatePerson(Long id, PersonnesDTO personnesDTO) {
+    public PersonneResponseDTO updatePerson(Long id, PersonneRequestDTO requestDTO) {
 
         return personnesRepository.findById(id)
                 .map(personneExistante -> {
-
-                    personneExistante.setNom(personnesDTO.getNom());
-                    personneExistante.setPrénom(personnesDTO.getPrénom());
-                    personneExistante.setAge(personnesDTO.getAge());
+                    personneExistante.setNom(requestDTO.nom());
+                    personneExistante.setPrénom(requestDTO.prénom());
+                    personneExistante.setAge(requestDTO.age());
 
                     Personnes personneMaj = personnesRepository.save(personneExistante);
-                    return enDTO(personneMaj);
+                    return enResponseDTO(personneMaj);
 
-                }).orElseThrow(() -> new RuntimeException("Aucune personne trouvée avec cet Id : " + id));
+                })
+                .orElseThrow(() -> new RuntimeException("Aucune personne trouvée avec cet Id : " + id));
     }
 
     @Override
@@ -60,26 +56,25 @@ public class PersonnesServiceImpl implements PersonnesService {
     }
 
     //CONVERTIONS... DTO en ENTITY
-    private Personnes enEntity(PersonnesDTO personnesDTO){
+    private Personnes enEntity(PersonneRequestDTO requestDTO){
 
         Personnes personnes = new Personnes();
 
-        personnes.setNom(personnesDTO.getNom());
-        personnes.setPrénom(personnesDTO.getPrénom());
-        personnes.setAge(personnesDTO.getAge());
+        personnes.setNom(requestDTO.nom());
+        personnes.setPrénom(requestDTO.prénom());
+        personnes.setAge(requestDTO.age());
 
         return personnes;
     }
 
     //CONVERTIONS... ENTITY en DTO
-    private PersonnesDTO enDTO(Personnes personnes){
+    private PersonneResponseDTO enResponseDTO(Personnes personnes){
 
-        PersonnesDTO dto = new PersonnesDTO();
-
-        dto.setNom(personnes.getNom());
-        dto.setPrénom(personnes.getPrénom());
-        dto.setAge(personnes.getAge());
-
-        return dto;
+        return new PersonneResponseDTO(
+                personnes.getId(),
+                personnes.getNom(),
+                personnes.getPrénom(),
+                personnes.getAge()
+        );
     }
 }

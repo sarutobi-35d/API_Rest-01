@@ -1,6 +1,8 @@
 package com.API_Rest_01.controller;
 
 
+import com.API_Rest_01.dto.PersonneRequestDTO;
+import com.API_Rest_01.dto.PersonneResponseDTO;
 import com.API_Rest_01.dto.PersonnesDTO;
 import com.API_Rest_01.entity.Personnes;
 import com.API_Rest_01.service.PersonnesService;
@@ -17,18 +19,18 @@ public class PersonnesController {
     private final PersonnesService personnesService;
 
     @GetMapping("/all")
-    public List<PersonnesDTO> getAllsPersons(){
+    public List<PersonneResponseDTO> getAllsPersons(){
         return personnesService.getPersons();
     }
 
     @PostMapping("/add")
-    public PersonnesDTO addPersonnes(@RequestBody PersonnesDTO personnesDTO){
-        return personnesService.addPerson(personnesDTO);
+    public PersonneResponseDTO addPersonnes(@RequestBody PersonneRequestDTO requestDTO){
+        return personnesService.addPerson(requestDTO);
     }
 
     @PutMapping("/update/{id}")
-    public PersonnesDTO update(@PathVariable Long id, @RequestBody PersonnesDTO personnesDTO){
-        return personnesService.updatePerson(id, personnesDTO);
+    public PersonneResponseDTO update(@PathVariable Long id, @RequestBody PersonneRequestDTO requestDTO){
+        return personnesService.updatePerson(id, requestDTO);
     }
 
     @DeleteMapping("/delete/{id}")
