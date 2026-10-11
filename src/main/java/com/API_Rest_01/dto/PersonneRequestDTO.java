@@ -8,7 +8,7 @@ import jakarta.validation.constraints.Size;
 public record PersonneRequestDTO(
 
         @NotBlank(message = "Le nom ne doit pas être vide")
-        @Size(min = 2, max = 30, message = "Le nom doit contenir entre 2 et 50 caractères")
+        @Size(min = 2, max = 30, message = "Le nom doit contenir entre 2 et 30 caractères")
         String nom,
 
         @NotBlank(message = "Le prénom ne doit pas être vide")
