@@ -3,7 +3,6 @@ package com.API_Rest_01.controller;
 
 import com.API_Rest_01.dto.PersonneRequestDTO;
 import com.API_Rest_01.dto.PersonneResponseDTO;
-import com.API_Rest_01.entity.Personnes;
 import com.API_Rest_01.service.PersonnesService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
