@@ -10,6 +10,8 @@ public interface PersonnesService {
 
     List<PersonneResponseDTO> getPersons();
 
+    PersonneResponseDTO getPerson(Long id);
+
     PersonneResponseDTO addPerson(PersonneRequestDTO requestDTO);
 
     PersonneResponseDTO updatePerson(Long id, PersonneRequestDTO requestDTO);

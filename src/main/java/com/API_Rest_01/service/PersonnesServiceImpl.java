@@ -26,6 +26,15 @@ public class PersonnesServiceImpl implements PersonnesService {
     }
 
     @Override
+    public PersonneResponseDTO getPerson(Long id) {
+
+        Personnes personnes = personnesRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Cette personne n'existe pas."));
+
+        return enResponseDTO(personnes);
+    }
+
+    @Override
     public PersonneResponseDTO addPerson(PersonneRequestDTO requestDTO) {
 
         Personnes personneAEnregistrer = enEntity(requestDTO);
