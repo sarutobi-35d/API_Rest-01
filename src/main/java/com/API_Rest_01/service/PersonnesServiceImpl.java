@@ -6,6 +6,10 @@ import com.API_Rest_01.entity.Personnes;
 import com.API_Rest_01.exception.ResourceNotFoundException;
 import com.API_Rest_01.repository.PersonnesRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,9 +19,13 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class PersonnesServiceImpl implements PersonnesService {
 
+    public static final String PERSONNE_CACHE = "PERSONNE_CACHE";
+    public static final String PERSONNES_LISTE_CACHE = "PERSONNES_LISTE_CACHE";
+
     private final PersonnesRepository personnesRepository;
 
     @Override
+    @Cacheable(value = PERSONNES_LISTE_CACHE, key = "'all'")
     public List<PersonneResponseDTO> getPersons() {
         return personnesRepository.findAll()
                 .stream()
@@ -26,15 +34,20 @@ public class PersonnesServiceImpl implements PersonnesService {
     }
 
     @Override
+    @Cacheable(value = "PERSONNE_CACHE", key = "#id")
     public PersonneResponseDTO getPerson(Long id) {
 
         Personnes personnes = personnesRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Cette personne n'existe pas."));
+                .orElseThrow(() -> new ResourceNotFoundException("Cette personne n'existe pas."));
 
         return enResponseDTO(personnes);
     }
 
+    // @Caching permet de combiner plusieurs opérations de cache sur une méthode
     @Override
+    @Caching(
+            put = @CachePut(value = PERSONNE_CACHE, key = "#result.id"),
+            evict = @CacheEvict(value = PERSONNES_LISTE_CACHE, allEntries = true))
     public PersonneResponseDTO addPerson(PersonneRequestDTO requestDTO) {
 
         Personnes personneAEnregistrer = enEntity(requestDTO);
@@ -44,6 +57,9 @@ public class PersonnesServiceImpl implements PersonnesService {
     }
 
     @Override
+    @Caching(
+            put = @CachePut(value = PERSONNE_CACHE, key = "#result.id"),
+            evict = @CacheEvict(value = PERSONNES_LISTE_CACHE, allEntries = true))
     public PersonneResponseDTO updatePerson(Long id, PersonneRequestDTO requestDTO) {
 
         return personnesRepository.findById(id)
@@ -60,6 +76,9 @@ public class PersonnesServiceImpl implements PersonnesService {
     }
 
     @Override
+    @Caching(evict = {
+            @CacheEvict(value = PERSONNE_CACHE, key = "#id"),
+            @CacheEvict(value = PERSONNES_LISTE_CACHE, allEntries = true)})
     public String deletePerson(Long id) {
 
         Personnes personnes = personnesRepository.findById(id)
